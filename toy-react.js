@@ -17,9 +17,9 @@ export class Component {
 		return this.render().vdom
 	}
 	[RENDER_TO_DOM](range) {
-			this._range = range
-			this._vdom = this.vdom
-			this._vdom[RENDER_TO_DOM](range)
+		this._range = range
+		this._vdom = this.vdom
+		this._vdom[RENDER_TO_DOM](range)
 	}
 	update() {
 		let isSameNode = (oldNode, newNode) => {
@@ -74,66 +74,66 @@ export class Component {
 		update(this._vdom, vdom)
 		this._vdom = vdom
 	}
-    setState(newState) {
-			if (this.state === null || typeof this.state !== 'object') {
-				this.state = newState
-				return
-			}
-        
-			let merge = (oldState, newState) => {
-				for (let p in newState) {
-					if(oldState[p] === null || typeof oldState[p] !== 'object') {
-						oldState[p] = newState[p]
-					} else {
-						merge(oldState[p], newState[p])
-					}
+	setState(newState) {
+		if (this.state === null || typeof this.state !== 'object') {
+			this.state = newState
+			return
+		}
+			
+		let merge = (oldState, newState) => {
+			for (let p in newState) {
+				if(oldState[p] === null || typeof oldState[p] !== 'object') {
+					oldState[p] = newState[p]
+				} else {
+					merge(oldState[p], newState[p])
 				}
 			}
-			merge(this.state, newState)
-			this.update()
-    }
+		}
+		merge(this.state, newState)
+		this.update()
+	}
 }
 
 class ElementWrpper extends Component{
-    constructor(type) {
-			super(type)
-			this.type = type
-    }
-    get vdom() {
-			this.vchildren = this.children.map(child => child.vdom)
-			return this
-    }
-    [RENDER_TO_DOM](range) {
-			this._range = range
+	constructor(type) {
+		super(type)
+		this.type = type
+	}
+	get vdom() {
+		this.vchildren = this.children.map(child => child.vdom)
+		return this
+	}
+	[RENDER_TO_DOM](range) {
+		this._range = range
 
-			let root = document.createElement(this.type)
+		let root = document.createElement(this.type)
 
-			for (let name in this.props) {
-				let value = this.props[name]
-				if (name.match(/^on([\s\S]+)/)) {
-					root.addEventListener(RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase()), value)
+		for (let name in this.props) {
+			let value = this.props[name]
+			if (name.match(/^on([\s\S]+)/)) {
+				root.addEventListener(RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase()), value)
+			} else {
+				if (name === 'className') {
+						root.setAttribute('class', value)
 				} else {
-					if (name === 'className') {
-							root.setAttribute('class', value)
-					} else {
-							root.setAttribute(name, value)
-					}	
-				}
+						root.setAttribute(name, value)
+				}	
 			}
+		}
 
-			if (!this.vchildren) {
-				this.vchildren = this.children.map(child => child.vdom)
-			}
+		if (!this.vchildren) {
+			this.vchildren = this.children.map(child => child.vdom)
+		}
 
-			for (let child of this.vchildren) {
-				let childRange = document.createRange();
-				childRange.setStart(root, root.childNodes.length)
-				childRange.setEnd(root, root.childNodes.length)
-				child[RENDER_TO_DOM](childRange)
-			}
+		for (let child of this.vchildren) {
+			let childRange = document.createRange();
+			childRange.setStart(root, root.childNodes.length)
+			childRange.setEnd(root, root.childNodes.length)
+			child[RENDER_TO_DOM](childRange)
+		}
 
-			replaceContent(range, root)
-    }
+		replaceContent(range, root)
+	}
 }
 
 class TextWrpper extends Component{
