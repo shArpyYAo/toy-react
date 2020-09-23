@@ -129,6 +129,8 @@ class Square extends Component {
     <Game />,
     document.getElementById('root')
   );
+
+  // Object(_toy_react_js__WEBPACK_IMPORTED_MODULE_0__["render"])(Object(_toy_react_js__WEBPACK_IMPORTED_MODULE_0__["createElement"])(Game, null), document.getElementById('root'));
   
   // let game = <Game/>
 
